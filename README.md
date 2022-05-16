@@ -4,7 +4,7 @@ Blueprint for PV loadbalancing using ferroamp and easee
 This blueprint makes it possible to tune the charging power of your Easee Home charger to match your excess power from solar production.
 Easee require a minimum of 6A for charging so the minimum charging power will be ~3.5kW for 3phase charging. 
 
-Blueprint is custom made for Ferroamp EH and Easee Home charger but will work with other brands as long as they can provide the sensor required below.
+Blueprint is custom made for Ferroamp EH and Easee Home charger but will work with other brands of Inverter as long as it can provide the sensors required below.
 
 <br>
 <b><h2>Important!</h2></b><br>
