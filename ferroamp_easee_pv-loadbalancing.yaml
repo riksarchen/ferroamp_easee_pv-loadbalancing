@@ -19,6 +19,7 @@ blueprint:
         entity:
           domain: sensor
           device_class: power
+      default: sensor.ferroamp_consumption_power
     ibatterysoc:
       name: "Ferroamp HOME battery state of charge sensor"
       description: "By default: sensor.ferroamp_esm_serial_number_state_of_charge"
