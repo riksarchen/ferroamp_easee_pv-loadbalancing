@@ -26,7 +26,6 @@ blueprint:
         entity:
           domain: sensor
           device_class: battery
-      default: sensor.ferroamp_consumption_power
     iexternalvoltage:
       name: "Ferroamp External voltage sensor"
       description: "By default: sensor.ferroamp_external_voltage"
