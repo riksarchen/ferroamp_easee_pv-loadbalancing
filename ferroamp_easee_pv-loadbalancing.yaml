@@ -22,11 +22,12 @@ blueprint:
       default: sensor.ferroamp_consumption_power
     ibatterysoc:
       name: "Ferroamp HOME battery state of charge sensor"
-      description: "By default: sensor.ferroamp_esm_serial_number_state_of_charge"
+      description: "By default: sensor.ferroamp_system_state_of_charge"
       selector:
         entity:
           domain: sensor
           device_class: battery
+      default: sensor.ferroamp_system_state_of_charge
     iexternalvoltage:
       name: "Ferroamp External voltage sensor"
       description: "By default: sensor.ferroamp_external_voltage"
