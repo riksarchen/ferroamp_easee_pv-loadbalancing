@@ -19,6 +19,13 @@ blueprint:
         entity:
           domain: sensor
           device_class: power
+    ibatterysoc:
+     name: "Ferroamp battery state of charge sensor"
+     description: "By default: sensor.ferroamp_esm_<serial_number>_state_of_charge"
+     selector:
+       entity:
+         domain: sensor
+         device_class: battery
       default: sensor.ferroamp_consumption_power
     iexternalvoltage:
       name: "Ferroamp External voltage sensor"
@@ -87,6 +94,7 @@ variables:
   entChargerDynamicLimit: !input ichargerdynamiclimit
   entSolarPower: !input isolarpower
   entConsumptionPower: !input iconsumptionpower
+  entBatterySOC: !input ibatterysoc
   entChargingPower: !input ichargerpower
   entExternalVoltage: !input iexternalvoltage
   entChargerStatus: !input ichargerstatus
@@ -98,6 +106,9 @@ variables:
     {% endif %}
   valCurrentAvailableForCharging: >-
     {% set powerAvailable = (states(entSolarPower)|float - states(entConsumptionPower)|float + (states(entChargingPower)|float * 1000))|int %}
+    {% if states(entBatterySOC)|float > 15 %}
+    {% set powerAvailable = powerAvailable + 5000 %}
+    {% endif %}
     {% set EaseeAvailableCurrent = (powerAvailable / valExternalVoltage) | float %} {% if
     EaseeAvailableCurrent < 6 %}  {% set EaseeAvailableCurrent = 6 %} {% elif
     EaseeAvailableCurrent > 32 %}  {% set EaseeAvailableCurrent = 32 %}  {%
