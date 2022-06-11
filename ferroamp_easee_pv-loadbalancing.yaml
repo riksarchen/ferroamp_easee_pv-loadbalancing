@@ -69,9 +69,9 @@ blueprint:
       description: "Set your home battery maximum discharge power."
       selector:
         number:
-        min: 0
-        max: 10000
-        unit_of_measurement: "W
+          min: 0
+          max: 10000
+          unit_of_measurement: "W
     itimestart:
       name: "Activate time"
       description: "Set the time you want the load balancing to activate. This is important to avoid low charging currents during nighttime."
