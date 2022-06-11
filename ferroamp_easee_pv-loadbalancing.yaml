@@ -63,15 +63,15 @@ blueprint:
         number:
           min: 0
           max: 100
+          step: 1
           unit_of_measurement: "%"
     ibatteryboostpower:
       name: "Maximum battery discharge capacity"
       description: "Set your home battery maximum discharge power."
       selector:
         number:
-          min: 0
-          max: 10000
-          unit_of_measurement: "W
+          unit_of_measurement: "W"
+          mode: box
     itimestart:
       name: "Activate time"
       description: "Set the time you want the load balancing to activate. This is important to avoid low charging currents during nighttime."
