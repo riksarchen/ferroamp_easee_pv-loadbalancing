@@ -57,7 +57,7 @@ blueprint:
         entity:
           domain: sensor
     iminbatterylevel:
-      name: "Boost charging with battery level if SoC is above:"
+      name: "Boost charging with homebattery if SoC is above:"
       description: "Boost charging with home battery power if home battery SoC is above this limit."
       selector:
         number:
@@ -67,7 +67,7 @@ blueprint:
           unit_of_measurement: "%"
       default: 20
     ibatteryboostpower:
-      name: "Maximum battery discharge capacity"
+      name: "Maximum homebattery discharge capacity"
       description: "Set your home battery maximum discharge power."
       selector:
         number:
