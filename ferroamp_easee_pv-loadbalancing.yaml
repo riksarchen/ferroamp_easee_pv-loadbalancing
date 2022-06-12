@@ -114,7 +114,7 @@ variables:
   entSolarPower: !input isolarpower
   entConsumptionPower: !input iconsumptionpower
   entBatterySOC: !input ibatterysoc
-  entBatteryMinSoc: !input iminbatterylevel
+  entBatteryMinSoC: !input iminbatterylevel
   entBatteryBoostPower: !input ibatteryboostpower
   entChargingPower: !input ichargerpower
   entExternalVoltage: !input iexternalvoltage
