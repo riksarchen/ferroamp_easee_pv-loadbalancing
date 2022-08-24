@@ -1,139 +1,150 @@
 blueprint:
   domain: automation
   name: Ferroamp + Easee PV Loadbalancing
-  description: "This automation connects Ferroamp and Easee for PV load balancing. <br><br>You need to have both Ferroamp and Easee integration up and running through HACS. See readme."
+  description: This automation connects Ferroamp and Easee for PV load balancing.
+    <br><br>You need to have both Ferroamp and Easee integration up and running through
+    HACS. See readme.
   source_url: https://github.com/riksarchen/ferroamp_easee_pv-loadbalancing/blob/main/ferroamp_easee_pv-loadbalancing.yaml
   input:
     isolarpower:
-      name: "Ferroamp Solar power sensor"
-      description: "By default: sensor.ferroamp_solar_power"
+      name: Ferroamp Solar power sensor
+      description: 'By default: sensor.ferroamp_solar_power'
       selector:
         entity:
           domain: sensor
           device_class: power
+          multiple: false
       default: sensor.ferroamp_solar_power
     iconsumptionpower:
-      name: "Ferroamp Consumption power sensor"
-      description: "By default: sensor.ferroamp_consumption_power"
+      name: Ferroamp Consumption power sensor
+      description: 'By default: sensor.ferroamp_consumption_power'
       selector:
         entity:
           domain: sensor
           device_class: power
+          multiple: false
       default: sensor.ferroamp_consumption_power
     ibatterysoc:
-      name: "Ferroamp HOME battery state of charge sensor"
-      description: "By default: sensor.ferroamp_system_state_of_charge"
+      name: Ferroamp HOME battery state of charge sensor
+      description: 'By default: sensor.ferroamp_system_state_of_charge'
       selector:
         entity:
           domain: sensor
           device_class: battery
+          multiple: false
       default: sensor.ferroamp_system_state_of_charge
     iexternalvoltage:
-      name: "Ferroamp External voltage sensor"
-      description: "By default: sensor.ferroamp_external_voltage"
+      name: Ferroamp External voltage sensor
+      description: 'By default: sensor.ferroamp_external_voltage'
       selector:
         entity:
           domain: sensor
           device_class: voltage
+          multiple: false
       default: sensor.ferroamp_external_voltage
     ichargerpower:
-      name: "Easee charging power sensor"
-      description: "By default (kW): sensor.<your easee name>_power"
+      name: Easee charging power sensor
+      description: 'By default (kW): sensor.<your easee name>_power'
       selector:
         entity:
           domain: sensor
           device_class: power
+          multiple: false
     ichargerdynamiclimit:
-      name: "Easee Charger Dynamic limit sensor"
-      description: "By default: sensor.<your easee name>_dynamic_charger_limit"
+      name: Easee Charger Dynamic limit sensor
+      description: 'By default: sensor.<your easee name>_dynamic_charger_limit'
       selector:
         entity:
           domain: sensor
           device_class: current
+          multiple: false
     ichargerstatus:
-      name: "Easee Charger Status sensor"
-      description: "By default: sensor.<your easee name>_status"
+      name: Easee Charger Status sensor
+      description: 'By default: sensor.<your easee name>_status'
       selector:
         entity:
           domain: sensor
+          multiple: false
     iminbatterylevel:
-      name: "Boost charging with homebattery if SoC is above:"
-      description: "Boost charging with home battery power if home battery SoC is above this limit."
+      name: 'Boost charging with homebattery if SoC is above:'
+      description: Boost charging with home battery power if home battery SoC is above
+        this limit.
       selector:
         number:
-          min: 0
-          max: 100
-          step: 1
-          unit_of_measurement: "%"
+          min: 0.0
+          max: 100.0
+          step: 1.0
+          unit_of_measurement: '%'
+          mode: slider
       default: 20
     ibatteryboostpower:
-      name: "Maximum homebattery discharge capacity"
-      description: "Set your home battery maximum discharge power."
+      name: Maximum homebattery discharge capacity
+      description: Set your home battery maximum discharge power.
       selector:
         number:
-          unit_of_measurement: "W"
+          unit_of_measurement: W
           mode: box
+          step: 100
+          min: 0
+          max: 25000
       default: 5000
     itimestart:
-      name: "Activate time"
-      description: "Set the time you want the load balancing to activate. This is important to avoid low charging currents during nighttime."
-      default: "08:00:00"
+      name: Activate time
+      description: Set the time you want the load balancing to activate. This is important
+        to avoid low charging currents during nighttime.
+      default: 08:00:00
       selector:
-        time:
+        time: {}
     itimeend:
-      name: "Deactivate time"
-      description: "Set the time you want the load balancing to deactivate. This is important to avoid low charging currents during nighttime."
-      default: "22:00:00"
+      name: Deactivate time
+      description: Set the time you want the load balancing to deactivate. This is
+        important to avoid low charging currents during nighttime.
+      default: '22:00:00'
       selector:
-        time:
-
+        time: {}
 trigger:
-  - platform: state
-    entity_id:
-      - !input isolarpower
+- platform: state
+  entity_id:
+  - !input 'isolarpower'
 condition:
-  - condition: state
-    entity_id: !input ichargerstatus
-    state: charging
-  - condition: template
-    value_template: >-
-      {{ (states(entChargerDynamicLimit)|int) !=
-      valCurrentAvailableForCharging }}
-  - condition: time
-    after: !input itimestart
-    before: !input itimeend
+- condition: state
+  entity_id: !input 'ichargerstatus'
+  state: charging
+- condition: template
+  value_template: '{{ (states(entChargerDynamicLimit)|int) != valCurrentAvailableForCharging
+    }}'
+- condition: time
+  after: !input 'itimestart'
+  before: !input 'itimeend'
 action:
-  - service: easee.set_charger_dynamic_limit
-    data:
-      charger_id: |
-        {{ state_attr(entChargerStatus,'id') }}
-      current: |
-        {{ valCurrentAvailableForCharging }}
+- service: easee.set_charger_dynamic_limit
+  data:
+    charger_id: '{{ state_attr(entChargerStatus,''id'') }}
+
+      '
+    current: '{{ valCurrentAvailableForCharging }}
+
+      '
 variables:
-  entChargerDynamicLimit: !input ichargerdynamiclimit
-  entSolarPower: !input isolarpower
-  entConsumptionPower: !input iconsumptionpower
-  entBatterySOC: !input ibatterysoc
-  entBatteryMinSoC: !input iminbatterylevel
-  entBatteryBoostPower: !input ibatteryboostpower
-  entChargingPower: !input ichargerpower
-  entExternalVoltage: !input iexternalvoltage
-  entChargerStatus: !input ichargerstatus
-  valExternalVoltage: >-
-    {% if state_attr(entChargerStatus, 'config_phaseMode') == 1 %}
-    {{ states(entExternalVoltage)|float / 3 }}
-    {% else %}
-    {{ states(entExternalVoltage)|float }}
-    {% endif %}
-  valCurrentAvailableForCharging: >-
-    {% set powerAvailable = (states(entSolarPower)|float - states(entConsumptionPower)|float + (states(entChargingPower)|float * 1000))|int %}
-    {% if states(entBatterySOC)|float >= entBatteryMinSoC|float %}
-    {% set powerAvailable = powerAvailable + entBatteryBoostPower|float %}
-    {% endif %}
-    {% set EaseeAvailableCurrent = (powerAvailable / valExternalVoltage) | float %} {% if
-    EaseeAvailableCurrent < 6 %}  {% set EaseeAvailableCurrent = 6 %} {% elif
-    EaseeAvailableCurrent > 32 %}  {% set EaseeAvailableCurrent = 32 %}  {%
-    endif %} {{ EaseeAvailableCurrent|int }}
+  entChargerDynamicLimit: !input 'ichargerdynamiclimit'
+  entSolarPower: !input 'isolarpower'
+  entConsumptionPower: !input 'iconsumptionpower'
+  entBatterySOC: !input 'ibatterysoc'
+  entBatteryMinSoC: !input 'iminbatterylevel'
+  entBatteryBoostPower: !input 'ibatteryboostpower'
+  entChargingPower: !input 'ichargerpower'
+  entExternalVoltage: !input 'iexternalvoltage'
+  entChargerStatus: !input 'ichargerstatus'
+  valExternalVoltage: '{% if state_attr(entChargerStatus, ''config_phaseMode'') ==
+    1 %} {{ states(entExternalVoltage)|float / 3 }} {% else %} {{ states(entExternalVoltage)|float
+    }} {% endif %}'
+  valCurrentAvailableForCharging: '{% set powerAvailable = (states(entSolarPower)|float
+    - states(entConsumptionPower)|float + (states(entChargingPower)|float * 1000))|int
+    %} {% if states(entBatterySOC)|float >= entBatteryMinSoC|float %} {% set powerAvailable
+    = powerAvailable + entBatteryBoostPower|float %} {% endif %} {% set EaseeAvailableCurrent
+    = (powerAvailable / valExternalVoltage) | float %} {% if EaseeAvailableCurrent
+    < 6 %}  {% set EaseeAvailableCurrent = 6 %} {% elif EaseeAvailableCurrent > 32
+    %}  {% set EaseeAvailableCurrent = 32 %}  {% endif %} {{ EaseeAvailableCurrent|int
+    }}'
 mode: restart
 max_exceeded: silent
-
